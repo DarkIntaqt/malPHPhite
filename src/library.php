@@ -3,7 +3,7 @@
 /**
  * LeagueOfLegendsAPI by DarkIntaqt
  */
- 
+
 class LeagueOfLegendsAPI
 {
   // VALID REGIONS
@@ -83,6 +83,46 @@ class LeagueOfLegendsAPI
     return json_decode($result,true);
   }
   
+  public function getMatches($player, int $count = 100) {
+    if(gettype($player) != "string") {
+      if(gettype($player) == "array") {
+        if(isset($player["@type"])) {
+          $player = $player["ids"]["puuid"];
+        } elseif(isset($player["puuid"])) {
+          $player = $player["puuid"];
+        } else {
+          throw new \Exception("Expected valid player array", 13);
+        }
+      } else {
+        throw new \Exception("Expected puuid or player array", 12);
+      }
+    }
+    if($count <= 0 || $count > 1000) {
+      throw new \Exception("Request maximum is between 1 to 1000 due to API limitations", 14);
+    }
+    $i = 0;
+    $matches = array();
+    if($count > 100) {
+      $c = 100;
+      while ($i < $count) {
+        if(($i + 100) > $count) {
+          $c = ($i + 100) - $count;
+        }
+        $result = $this->query("https://{$this->currentRegionParameters["server"]}.api.riotgames.com/lol/match/v5/matches/by-puuid/{$player}/ids?start={$i}&count={$c}",60);
+        $i = $i + 100;
+        if(gettype($result) == "array" && count($result)>0) {
+          foreach ($result as $k) {
+            array_push($matches,$k);
+          }
+        } else {
+          $i = $count;
+        }
+      }
+    } else {
+      $matches = $this->query("https://{$this->currentRegionParameters["server"]}.api.riotgames.com/lol/match/v5/matches/by-puuid/{$player}/ids?start=0&count={$count}",60);
+    }
+    return $matches;
+  }
   
   public function getSummoner(string $name="", $beautify = false, string $method = "AUTO") {
     
@@ -121,8 +161,7 @@ class LeagueOfLegendsAPI
         $requesturl .= "/by-account";
         break;
       default:
-        throw new \Exception("Invalid method: {$method}. [NAME,PUUID,ID,ACCOUNTID]", 6);    
-        break;
+        throw new \Exception("Invalid method: {$method}. [NAME,PUUID,ID,ACCOUNTID]", 6);
     }
     
     $result = $this->query($requesturl . "/" . str_replace(" ","",$name));
@@ -156,16 +195,16 @@ class LeagueOfLegendsAPI
   }
   
   // GETSUMMONER FUNCTION ALIAS
-  public function getSummonerByName(string $name, bool $beautify) {
+  public function getSummonerByName(string $name, bool $beautify = false) {
     return $this->getSummoner($name,$beautify,"NAME");
   }
-  public function getSummonerByPUUID(string $puuid, bool $beautify) {
+  public function getSummonerByPUUID(string $puuid, bool $beautify = false) {
     return $this->getSummoner($puuid,$beautify,"PUUID");
   }
-  public function getSummonerById(string $id, bool $beautify) {
+  public function getSummonerById(string $id, bool $beautify = false) {
     return $this->getSummoner($id,$beautify,"ID");
   }
-  public function getSummonerByAccountId(string $id, bool $beautify) {
+  public function getSummonerByAccountId(string $id, bool $beautify = false) {
     return $this->getSummoner($id,$beautify,"ACCOUNTID");
   }
   
