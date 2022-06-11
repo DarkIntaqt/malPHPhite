@@ -9,6 +9,7 @@ class LeagueOfLegendsAPI
   // VALID REGIONS
   private static $regions = ["euw","euw1","eune","eun1","kr","oc","oc1","na1","na","br","br1","jp1","jp","ru"];
   
+  
   // REGIONS TO PARSE
   private static $parameters = array(
     array("euw1","europe",[0,1]),
@@ -48,6 +49,8 @@ class LeagueOfLegendsAPI
   protected $cache = true;
   protected $cachedir = "/tmp";
   
+
+  // Returns status code in case of 4xx requests
   protected function query(string $url,int $cacheduration = 300) {
     /* CHECK FOR FILE IN CACHE FIRST */
     if($this->cache) {
@@ -68,10 +71,18 @@ class LeagueOfLegendsAPI
     
     $curl = curl_init($url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_HEADER, true);
     curl_setopt($curl, CURLOPT_HTTPHEADER, array("X-Riot-Token: {$this->key}"));
-    $result = curl_exec($curl);
+    $response = curl_exec($curl);
+    $header = substr($response,0, curl_getinfo($curl,CURLINFO_HEADER_SIZE));
+    $result = substr($response, curl_getinfo($curl,CURLINFO_HEADER_SIZE));
     curl_close($curl);
     
+    $return = json_decode($result,true);
+    if(isset($return["status"]["status_code"])) {
+      return $return["status"]["status_code"];
+    }
+
     if($this->cache) {
       try {
         file_put_contents($filepath,$result);
@@ -79,11 +90,11 @@ class LeagueOfLegendsAPI
         trigger_error("Cannot write cache file to cache directory: {$e}",E_USER_WARNING);
       }
     }
-    
-    return json_decode($result,true);
+    return $return;
   }
   
-  public function getMatches($player, int $count = 100) {
+  // returns array, even with wrong request
+  public function getMatches(array $player, int $count = 100) {
     if(gettype($player) != "string") {
       if(gettype($player) == "array") {
         if(isset($player["@type"])) {
@@ -105,10 +116,13 @@ class LeagueOfLegendsAPI
     if($count > 100) {
       $c = 100;
       while ($i < $count) {
-        if(($i + 100) > $count) {
-          $c = ($i + 100) - $count;
+        if(($i + 100) >= $count) {
+          $c = ($i + 100) - ($i +(100 - abs($i - $count)));
         }
         $result = $this->query("https://{$this->currentRegionParameters["server"]}.api.riotgames.com/lol/match/v5/matches/by-puuid/{$player}/ids?start={$i}&count={$c}",60);
+        if(gettype($result) == "integer") {
+          return $matches;
+        }
         $i = $i + 100;
         if(gettype($result) == "array" && count($result)>0) {
           foreach ($result as $k) {
@@ -124,6 +138,9 @@ class LeagueOfLegendsAPI
     return $matches;
   }
   
+
+  // returns false if summoner does not exists or other error
+  
   public function getSummoner(string $name="", $beautify = false, string $method = "AUTO") {
     
     // DETERMINE TYPE BY STRING LENGTH
@@ -135,13 +152,9 @@ class LeagueOfLegendsAPI
         $method = "NAME";
       } elseif($len == 78) {
         $method = "PUUID";
-      } elseif($len == 47) {
+      } else{
         $method = "ID";
         trigger_error("Using method AUTO is not recommended for id and account id. If you know the method please provide it: [NAME,PUUID,ID,ACCOUNTID]", E_USER_WARNING);
-      } else {
-        $method = "ACCOUNTID";
-        trigger_error("Using method AUTO is not recommended for id and account id. If you know the method please provide it: [NAME,PUUID,ID,ACCOUNTID]", E_USER_WARNING);
-        
       }
     }
     $method = strtolower($method);
@@ -166,7 +179,10 @@ class LeagueOfLegendsAPI
     
     $result = $this->query($requesturl . "/" . str_replace(" ","",$name));
     
-     
+    if(gettype($result) == "integer") {
+      return false;
+    } 
+
     if($beautify === true) {
       if(!isset($result["name"])) {
         throw new \Exception("The summoner request is empty. ", 8);
@@ -228,8 +244,5 @@ class LeagueOfLegendsAPI
     $this->currentRegionParameters = $this->getRegionParameters($this->region);
   }
 }
-
-
-
 
  ?>
