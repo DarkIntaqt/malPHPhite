@@ -1,6 +1,6 @@
 # getApextierLeagues
 ```php
-public function getSummoner($tier, $queue)
+public function getApextierLeagues($tier, $queue)
 ```
 
 ## Aliases
@@ -29,7 +29,7 @@ getMasterLeague($queue) {
 $challengerSolo = $api->getChallengerLeague("solo");
 print_r($challengerSolo);
 
-$challengerFlex = $api->getLeague("challenger", "flex");
+$challengerFlex = $api->getApextierLeagues("challenger", "flex");
 print_r($challengerFlex);
 ```
 

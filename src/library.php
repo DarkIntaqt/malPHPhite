@@ -392,7 +392,7 @@ class LeagueOfLegendsAPI
     return $this->getApextierLeagues("master", $queue);
   }
 
-  public function getLeague($queue, $tier, $division, $page = 1)
+  public function getLeagues($queue, $tier, $division, $page = 1)
   {
     if (gettype($queue) !== "string") {
       throw new \Exception("Expected string, got " . gettype($queue), 21);
