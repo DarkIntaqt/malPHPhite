@@ -3,6 +3,8 @@
 public function getChallenges($player)
 ```
 
+## Parameters
+
 | Parameter | Type(s)       | Example                     | Required |
 | --------- | ------------- | --------------------------- | :------: |
 | player    | array, string | "puuid", `$summoner` object | **YES**  |

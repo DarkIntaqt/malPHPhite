@@ -2,6 +2,7 @@
 ```php
 public function getMatches($player, $count = 100, $options = array())
 ```
+## Parameters
 
 | Parameter | Type(s)       | Example                                                                      |         Required          |
 | --------- | ------------- | ---------------------------------------------------------------------------- | :-----------------------: |

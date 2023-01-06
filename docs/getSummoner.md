@@ -25,6 +25,8 @@ getSummonerByAccountId($id, $beautify = false) {
 }
   ```
 
+## Parameters
+
 | Parameter | Type    | Example                                    |        Required         |
 | --------- | ------- | ------------------------------------------ | :---------------------: |
 | name      | string  | "puuid", "summoner name"                   |         **YES**         |
