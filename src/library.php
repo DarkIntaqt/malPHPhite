@@ -38,15 +38,15 @@ class LeagueOfLegendsAPI
     array("na1","americas",[7,8]),
     array("br1","americas",[9,10]),
     array("jp1","asia",[11,12]),
-    array("la1","americas",[14,15]),
-    array("la2","americas",[16,17]),
-    array("tr1","europe",[18,19]),
-    array("ru","europe",[20]),
-    array("ph2","sea",[21,22]),
-    array("sg2","sea",[23,24]),
-    array("th2","sea",[25,26]),
-    array("tw2","sea",[27,28]),
-    array("vn2","sea",[29,30])
+    array("la1","americas",[13,14]),
+    array("la2","americas",[15,16]),
+    array("tr1","europe",[17,18]),
+    array("ru","europe",[19]),
+    array("ph2","sea",[20,21]),
+    array("sg2","sea",[22,23]),
+    array("th2","sea",[24,25]),
+    array("tw2","sea",[26,27]),
+    array("vn2","sea",[28,29])
   );
   
   
@@ -242,8 +242,8 @@ public function getMatches($player, int $count = 100) {
     
     $result = $this->query($requesturl . "/" . $name,60,true);
     
-    if(gettype($result) == "integer") {
-      return false;
+    if(gettype($result) === "integer") {
+      return $result;
     } 
 
     if($beautify === true) {
