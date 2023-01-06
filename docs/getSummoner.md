@@ -2,6 +2,7 @@
 ```php
 public function getSummoner($name, $beautify = false, $method = "AUTO")
 ```
+
 This functions **tries** to determine the type of the given name. It can differ pretty good between a summoner name and a puuid. 
 
 Still it is recommened to "stay on the safe side of the road" and use an alias instead. 
@@ -67,3 +68,6 @@ print_r($summonerByName);
 $summonerByPuuid = $api->getSummonerByPuuid($summoner["ids"]["puuid"]);
 print_r($summonerByPuuid);
 ```
+
+## Cache
+Summoner requests are cached 1 minute by default. 

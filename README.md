@@ -57,6 +57,9 @@ if(gettype($summoner) === "integer") {
 }
 ```
 
+### Documentation
+Please read the [docs](https://github.com/DarkIntaqt/malPHPhite/tree/main/docs) for a detailed description. 
+
 ## Disclaimer
 This library should work, but of course there is no warranty for using it.
 

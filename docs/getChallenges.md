@@ -16,3 +16,6 @@ $summoner = $api->getSummonerByName("summoner");
 $matches = $api->getChallenges($summoner);
 # get the challenges for "summoner"
 ```
+
+## Cache
+Challenges requests are cached 15 minutes by default. 
