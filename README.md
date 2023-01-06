@@ -52,7 +52,7 @@ $summoner = $api->getSummonerByName("THIS SUMMONER DOES NOT EXIST");
 # returns 404
 
 # possible catches are
-if(getType($summoner) === "integer") {
+if(gettype($summoner) === "integer") {
    echo "the requested summoner does not exist";
 }
 ```
