@@ -456,6 +456,14 @@ class LeagueOfLegendsAPI
     return $this->query("https://{$this->currentRegionParameters["region"]}.api.riotgames.com/lol/challenges/v1/player-data/{$player}", 900);
   }
 
+
+  public function getActiveGame($player)
+  {
+    $player = $this->parseSummoner($player, "id");
+
+    return $this->query("https://{$this->currentRegionParameters["region"]}.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/{$player}", 15);
+  }
+
   public function getRegion()
   {
     return $this->currentRegionParameters;
