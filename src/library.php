@@ -247,16 +247,213 @@ class LeagueOfLegendsAPI
   }
 
 
+  public function getMatch($matchid)
+  {
+    if (gettype($matchid) !== "string") {
+      throw new \Exception("Expected string, got " . gettype($matchid), 21);
+    }
+
+    return $this->query("https://{$this->currentRegionParameters["server"]}.api.riotgames.com/lol/match/v5/matches/{$matchid}", 3600);
+  }
+  // alias for getMatch
+  public function getMatchDetails($matchid)
+  {
+    return $this->getMatch($matchid);
+  }
+
+
+  public function getMatchTimeline($matchid)
+  {
+    if (gettype($matchid) !== "string") {
+      throw new \Exception("Expected string, got " . gettype($matchid), 21);
+    }
+
+    return $this->query("https://{$this->currentRegionParameters["server"]}.api.riotgames.com/lol/match/v5/matches/{$matchid}/timeline", 3600);
+  }
+
+
+  public function getMastery($player)
+  {
+    $player = $this->parseSummoner($player, "id");
+
+    return $this->query("https://{$this->currentRegionParameters["region"]}.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/{$player}", 900);
+  }
+
+
+  public function getChampionRotations()
+  {
+    return $this->query("https://{$this->currentRegionParameters["region"]}.api.riotgames.com/lol/platform/v3/champion-rotations", 60);
+  }
+
+
+  public function getClashTournaments()
+  {
+    return $this->query("https://{$this->currentRegionParameters["region"]}.api.riotgames.com/lol/clash/v1/tournaments", 60);
+  }
+
+  public function getClashPlayer($player)
+  {
+    $player = $this->parseSummoner($player, "id");
+    return $this->query("https://{$this->currentRegionParameters["region"]}.api.riotgames.com/lol/clash/v1/players/by-summoner/{$player}", 60);
+  }
+
+  public function getClashTeam($teamid)
+  {
+    if (gettype($teamid) !== "string") {
+      throw new \Exception("Expected string, got " . gettype($teamid), 21);
+    }
+
+    return $this->query("https://{$this->currentRegionParameters["region"]}.api.riotgames.com/lol/clash/v1/teams/{$teamid}", 60);
+  }
+
+  public function getClashTournamentsByTeam($teamid)
+  {
+    if (gettype($teamid) !== "string") {
+      throw new \Exception("Expected string, got " . gettype($teamid), 21);
+    }
+
+    return $this->query("https://{$this->currentRegionParameters["region"]}.api.riotgames.com/lol/clash/v1/tournaments/by-team/{$teamid}", 60);
+  }
+
+  public function getClashTournamentsByTournament($tournamentid)
+  {
+    if (gettype($tournamentid) !== "string") {
+      throw new \Exception("Expected string, got " . gettype($tournamentid), 21);
+    }
+
+    return $this->query("https://{$this->currentRegionParameters["region"]}.api.riotgames.com/lol/clash/v1/tournaments/{$tournamentid}", 60);
+  }
+
+
+  public function getRankBySummoner($player, $beautify = false)
+  {
+    $player = $this->parseSummoner($player, "id");
+
+    $response = $this->query("https://{$this->currentRegionParameters["region"]}.api.riotgames.com/lol/league/v4/entries/by-summoner/{$player}", 15);
+
+    if ($beautify === false || gettype($response) === "integer") {
+      return $response;
+    }
+
+    $result = array();
+    foreach ($response as $key => $value) {
+      $result[$value["queueType"]] = $value;
+
+      if (isset($value["miniSeries"])) {
+        $result[$value["queueType"]]["promos"] = true;
+      } else {
+        $result[$value["queueType"]]["promos"] = false;
+      }
+    }
+
+    return $result;
+  }
+
+
+  public function getApextierLeagues($league, $queue)
+  {
+    if (gettype($queue) !== "string") {
+      throw new \Exception("Expected string, got " . gettype($queue), 21);
+    }
+
+    if (gettype($league) !== "string") {
+      throw new \Exception("Expected string, got " . gettype($league), 21);
+    }
+
+
+
+    $queue = strtolower($queue);
+    $league = strtolower($league);
+    if (!in_array($league, ["master", "grandmaster", "challenger"])) {
+      throw new \Exception("Invalid league. Expected 'challenger', 'grandmaster' or 'master', got " . $league, 23);
+    }
+
+    if ($queue === "solo") {
+      $queue = "RANKED_SOLO_5x5";
+    } elseif ($queue === "flex") {
+      $queue = "RANKED_FLEX_SR";
+    } else {
+      throw new \Exception("Invalid queue. Expected 'solo' or 'flex', got " . $queue, 22);
+    }
+
+    return $this->query("https://{$this->currentRegionParameters["region"]}.api.riotgames.com/lol/league/v4/{$league}leagues/by-queue/{$queue}", 60);
+  }
+
+  public function getChallengerLeague($queue)
+  {
+    return $this->getApextierLeagues("challenger", $queue);
+  }
+  public function getGrandmasterLeague($queue)
+  {
+    return $this->getApextierLeagues("grandmaster", $queue);
+  }
+  public function getMasterLeague($queue)
+  {
+    return $this->getApextierLeagues("master", $queue);
+  }
+
+  public function getLeague($queue, $tier, $division, $page = 1)
+  {
+    if (gettype($queue) !== "string") {
+      throw new \Exception("Expected string, got " . gettype($queue), 21);
+    }
+    if (gettype($tier) !== "string") {
+      throw new \Exception("Expected string, got " . gettype($tier), 21);
+    }
+    if (gettype($division) !== "integer") {
+      throw new \Exception("Expected integer, got " . gettype($division), 21);
+    }
+
+    if (gettype($page) !== "integer") {
+      throw new \Exception("Expected integer, got " . gettype($page), 21);
+    }
+
+    $queue = strtolower($queue);
+    if ($queue === "solo") {
+      $queue = "RANKED_SOLO_5x5";
+    } elseif ($queue === "flex") {
+      $queue = "RANKED_FLEX_SR";
+    } else {
+      throw new \Exception("Invalid queue. Expected 'solo' or 'flex', got " . $queue, 22);
+    }
+
+    $tier = strtoupper($tier);
+    if (!in_array($tier, ["IRON", "BRONZE", "SILVER", "GOLD", "PLATINUM", "DIAMOND"])) {
+      throw new \Exception("Invalid tier. Got " . $tier, 24);
+    }
+
+    if ($division <= 0 || $division > 4) {
+      throw new \Exception("Invalid division. Division can only go from 1-4", 25);
+    }
+
+    $divisionString = "";
+
+    if ($division === 4) {
+      $divisionString = "IV";
+    } else {
+      for ($i = 0; $i < $division; $i++) {
+        $divisionString .= "I";
+      }
+    }
+
+    return $this->query("https://{$this->currentRegionParameters["region"]}.api.riotgames.com/lol/league/v4/entries/{$queue}/{$tier}/{$divisionString}?page={$page}", 60);
+  }
+
+  public function getLeagueByLeague($leagueid)
+  {
+    if (gettype($leagueid) !== "string") {
+      throw new \Exception("Expected string, got " . gettype($leagueid), 21);
+    }
+
+    return $this->query("https://{$this->currentRegionParameters["region"]}.api.riotgames.com/lol/league/v4/leagues/{$leagueid}", 60);
+  }
+
   public function getChallenges($player)
   {
 
     $player = $this->parseSummoner($player, "puuid");
 
-    $result = $this->query("https://{$this->currentRegionParameters["region"]}.api.riotgames.com/lol/challenges/v1/player-data/{$player}", 900);
-    if (gettype($result) == "integer") {
-      return $result;
-    }
-    return $result;
+    return $this->query("https://{$this->currentRegionParameters["region"]}.api.riotgames.com/lol/challenges/v1/player-data/{$player}", 900);
   }
 
   public function getRegion()
