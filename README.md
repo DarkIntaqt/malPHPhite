@@ -8,7 +8,7 @@ A rock-solid php library for the league of legends API.
 ## Quick start
 
 ### Usage example
-To get quickly started with this library, include the library first. Then, generaze a new LeagueOfLegendsAPI object. 
+To get quickly started with this library, include the library first. Then, generate a new LeagueOfLegendsAPI object. 
 
 After that we fetch "Hide on bush"'s profile in KR and print the result. 
 
