@@ -562,7 +562,7 @@ class LeagueOfLegendsAPI
     return $this->getSummoner($id, $beautify, "ACCOUNTID");
   }
 
-  public function getPUUIDByRiotId(...$riotId)
+  public function getAccountByRiotId(...$riotId)
   {
     $gameName = '';
     $tagLine = '';
