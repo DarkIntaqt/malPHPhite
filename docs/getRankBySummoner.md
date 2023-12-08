@@ -50,7 +50,7 @@ Beautify the result will "transform" the returned object to a more readable vers
 }
 ```
 
-By default the beautify function is disabled. 
+By default, the beautify function is disabled. 
 
 ## Examples
 ```php

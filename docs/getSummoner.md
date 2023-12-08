@@ -5,7 +5,7 @@ public function getSummoner($name, $beautify = false, $method = "AUTO")
 
 This functions **tries** to determine the type of the given name. It can differ pretty good between a summoner name and a puuid. 
 
-Still it is recommened to "stay on the safe side of the road" and use an alias instead. 
+Still it is recommend to "stay on the safe side of the road" and use an alias instead. 
 ## Aliases
 ```php
 getSummonerByName($name, $beautify = false) {
@@ -58,9 +58,9 @@ Beautify the result will "transform" the returned object to a more readable vers
 }
 ```
 
-Other functions are can use the beautified summoner object as well as the not beautifed summoner object. 
+Other functions are can use the beautified summoner object as well as the not beautified summoner object. 
 
-By default the beautify function is disabled. 
+By default, the beautify function is disabled. 
 
 ## Examples
 ```php

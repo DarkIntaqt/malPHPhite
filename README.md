@@ -21,10 +21,14 @@ After that we fetch "Hide on bush"'s profile in KR and print the result.
    $api = new LeagueOfLegendsAPI("RGAPI-KEY","kr",true,"/var/tmp/api-cache");
    # be careful: the library throws an error if the region doesn't exist
 
-   $summoner = $api->getSummonerByName("Hide on bush");
+   $puuid = $api->getAccountByRiotId("Hide on bush","KR1")["puuid"];  # $api->getAccountByRiotId("Hide on bush#KR1")["puuid"] would also work
+   $summoner =$api->getSummonerByPUUID($puuid);
+   
    print_r($summoner);
    # {
    #  "id": ...,
+   #  "accountId": ...,
+   #  "puuid": ...,
    #  "name": "Hide on bush",
    #  ...
    #}
