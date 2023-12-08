@@ -571,11 +571,11 @@ class LeagueOfLegendsAPI
         throw new \Exception("Invalid Riot ID. '#' not found.");
       }
       $riotId = explode('#', $riotId[0]);
-      $gameName = $riotId[0];
-      $tagLine = $riotId[1];
+      $gameName = urlencode($riotId[0]);
+      $tagLine = urlencode($riotId[1]);
     } elseif (count($riotId) === 2) {
-      $gameName = $riotId[0];
-      $tagLine = $riotId[1];
+      $gameName = urlencode($riotId[0]);
+      $tagLine = urlencode($riotId[1]);
 
       if (empty($gameName) || empty($tagLine)) {
         throw new \Exception("Empty gameName or tagLine provided.");
