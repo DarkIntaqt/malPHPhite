@@ -562,6 +562,34 @@ class LeagueOfLegendsAPI
     return $this->getSummoner($id, $beautify, "ACCOUNTID");
   }
 
+  public function getAccountByRiotId(...$riotId)
+  {
+    $gameName = '';
+    $tagLine = '';
+    if (count($riotId) === 1) {
+      if (strpos($riotId[0], '#') === false) {
+        throw new \Exception("Invalid Riot ID. '#' not found.");
+      }
+      $riotId = explode('#', $riotId[0]);
+      $gameName = urlencode($riotId[0]);
+      $tagLine = urlencode($riotId[1]);
+    } elseif (count($riotId) === 2) {
+      $gameName = urlencode($riotId[0]);
+      $tagLine = urlencode($riotId[1]);
+
+      if (empty($gameName) || empty($tagLine)) {
+        throw new \Exception("Empty gameName or tagLine provided.");
+      }
+    } else {
+      throw new \Exception("Invalid Riot ID. Provide gameName and tagLine. Or provide full Riot ID as 
+                                           a string including the #.");
+    }
+
+    $requesturl = "https://{$this->currentRegionParameters["server"]}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{$gameName}/{$tagLine}";
+
+    return $this->query($requesturl, 60, true);
+  }
+
 
   // CONSTRUCTOR(KEY, REGION, CACHE, CACHEDIR)
   function __construct(string $key = "", string $region = "", bool $cache = true, string $cachedir = "/tmp")
