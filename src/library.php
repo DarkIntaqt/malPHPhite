@@ -9,7 +9,7 @@
 class LeagueOfLegendsAPI
 {
   // VALID REGIONS
-  private static $regions = [
+  private static $regions = ["
     "euw1", "euw",
     "eun1", "eune",
     "kr",
@@ -518,12 +518,11 @@ class LeagueOfLegendsAPI
     }
 
     if ($beautify === true) {
-      if (!isset($result["name"])) {
+      if (!isset($result["puuid"])) {
         throw new \Exception("The summoner request is empty. ", 8);
       }
       $result = array(
         "@type" => "Summoner",
-        "name" => $result["name"],
         "level" => $result["summonerLevel"],
         "profileIcon" => array(
           "id" => $result["profileIconId"],
