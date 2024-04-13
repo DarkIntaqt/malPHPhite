@@ -9,7 +9,7 @@
 class LeagueOfLegendsAPI
 {
   // VALID REGIONS
-  private static $regions = ["
+  private static $regions = [
     "euw1", "euw",
     "eun1", "eune",
     "kr",
